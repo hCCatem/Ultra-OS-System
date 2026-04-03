@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultra OS 1.0</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:black;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+#app {
+  text-align:center;
+}
+
+.app {
+  background:#222;
+  padding:15px;
+  margin:10px;
+  border-radius:12px;
+  display:inline-block;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.app:hover {
+  background:#333;
+  transform:scale(1.05);
+}
+
+button {
+  padding:10px 20px;
+  margin-top:15px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<script>
+let screen = "lock";
+let installedApps = ["Phone", "Messages", "Settings"];
+let currentApp = "";
+
+// MAIN RENDER FUNCTION
+function render() {
+  const app = document.getElementById("app");
+
+  // LOCK SCREEN
+  if (screen === "lock") {
+    app.innerHTML = `
+      <h1>Ultra OS v2</h1>
+      <p>${new Date().toLocaleTimeString()}</p>
+      <button onclick="unlock()">Unlock</button>
+    `;
+  }
+
+  // HOME SCREEN
+  if (screen === "home") {
+    let appsHTML = installedApps.map(a =>
+      `<div class="app" onclick="openApp('${a}')">${a}</div>`
+    ).join("");
+
+    app.innerHTML = `
+      <h2>Home</h2>
+      ${appsHTML}
+      <div class="app" onclick="openInstaller()">Installer</div>
+    `;
+  }
+
+  // APP SCREEN
+  if (screen === "app") {
+    app.innerHTML = `
+      <h2>${currentApp}</h2>
+      <p>Running without Google services</p>
+      <button onclick="goHome()">Back</button>
+    `;
+  }
+
+  // PACKAGE INSTALLER
+  if (screen === "installer") {
+    app.innerHTML = `
+      <h2>Package Installer</h2>
+      <p>No Google Play - Local install only</p>
+
+      <button onclick="installApp('Notes')">Install Notes</button>
+      <button onclick="installApp('Calculator')">Install Calculator</button>
+
+      <br><br>
+      <button onclick="goHome()">Back</button>
+    `;
+  }
+}
+
+// FUNCTIONS
+function unlock() {
+  screen = "home";
+  render();
+}
+
+function goHome() {
+  screen = "home";
+  render();
+}
+
+function openApp(name) {
+  currentApp = name;
+  screen = "app";
+  render();
+}
+
+function openInstaller() {
+  screen = "installer";
+  render();
+}
+
+// INSTALLER LOGIC (NO GOOGLE)
+function installApp(name) {
+  if (!installedApps.includes(name)) {
+    installedApps.push(name);
+    alert(name + " installed successfully!");
+  } else {
+    alert("App already installed");
+  }
+  render();
+}
+
+// UPDATE CLOCK
+setInterval(render, 1000);
+
+// START OS
+render();
+</script>
+
+</body>
+</html>
