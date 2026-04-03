@@ -1,0 +1,47 @@
+import React, { useState } from "react"; import { motion } from "framer-motion";
+
+export default function UltraOS() { const [screen, setScreen] = useState("lock"); const [time, setTime] = useState(new Date().toLocaleTimeString());
+
+setInterval(() => { setTime(new Date().toLocaleTimeString()); }, 1000);
+
+const apps = [ { name: "Phone", screen: "phone" }, { name: "Messages", screen: "messages" }, { name: "Settings", screen: "settings" } ];
+
+return ( <div className="w-full h-screen bg-black text-white flex items-center justify-center"> {screen === "lock" && ( <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center" onClick={() => setScreen("home")} > <h1 className="text-5xl mb-4">Ultra OS</h1> <p className="text-2xl">{time}</p> <p className="mt-4">Tap to unlock</p> </motion.div> )}
+
+{screen === "home" && (
+    <motion.div
+      initial={{ scale: 0.8 }}
+      animate={{ scale: 1 }}
+      className="grid grid-cols-3 gap-6"
+    >
+      {apps.map((app, i) => (
+        <div
+          key={i}
+          className="bg-gray-800 p-4 rounded-2xl text-center cursor-pointer"
+          onClick={() => setScreen(app.screen)}
+        >
+          {app.name}
+        </div>
+      ))}
+    </motion.div>
+  )}
+
+  {screen === "phone" && (
+    <AppScreen title="Phone" goBack={() => setScreen("home")} />
+  )}
+
+  {screen === "messages" && (
+    <AppScreen title="Messages" goBack={() => setScreen("home")} />
+  )}
+
+  {screen === "settings" && (
+    <AppScreen title="Settings (No Google)" goBack={() => setScreen("home")} />
+  )}
+</div>
+
+); }
+
+function AppScreen({ title, goBack }) { return ( <motion.div initial={{ x: 300 }} animate={{ x: 0 }} className="w-full h-full flex flex-col items-center justify-center" > <h1 className="text-3xl mb-4">{title}</h1> <button
+onClick={goBack}
+className="bg-white text-black px-4 py-2 rounded-xl"
+> Back </button> </motion.div> ); }
